@@ -1,8 +1,10 @@
 var spapager = (function(){
 	var currentPage; // Holds the currently visible page.
+	var allPageIds; // Holds the ids of all pages. Used for duplicate checking.
 	
 	/**
 	 * Initializes the paging concept. 
+	 * Typically executed after the onLoad event triggered. 
 	 * All divs with data-role="page" are considered pages.
 	 * All divs are auto-hidden, except for the first one in the document
 	 * All divs get the page class which makes them 100%x100% in size and positioned relatively
@@ -11,6 +13,38 @@ var spapager = (function(){
 		$('div[data-role="page"]').addClass('page hidden');
 		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass('page-current');
 		currentPage = $('div[data-role="page"]:eq(0)');
+		
+	}
+	
+	var addPage = function(id) {
+
+			// If the allPageIds array is not populated yet, do so now.
+		if (typeof allPageIds !== 'object') {
+			allPageIds = [];
+			$('div[data-role="page"]').each(function(i,e) {
+				var foundId = $(e).attr('id');
+				if (foundId) allPageIds.push(foundId);
+			});
+		}
+		
+			// If there's no page with this id yet, accept it and register it
+		if (allPageIds.indexOf(id) < 0) {
+			allPageIds.push(id);
+		} else {
+			console.error('Unable to add page. Page already exists.');
+			return;
+		}
+		
+			//Add the new page to the DOM.
+		var newPage = $('<div/>', {
+			'id':id,
+			'data-role':'page',
+			'class':'page hidden'
+		});
+		$('body').append(newPage);
+		
+			//Return a jQuery object referring the new page.
+		return newPage;
 	}
 	
 	/**
@@ -91,6 +125,7 @@ var spapager = (function(){
 
 	
 	return {
+		addPage: addPage,
 		init: init,
 		changePage: changePage
 	};
