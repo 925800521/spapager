@@ -4,43 +4,8 @@
 		<title>Page Changer</title>
 		<meta name="author" content="Appwards - Menno Bieringa">
 		<meta name="viewport" content="width=device-width,target-densitydpi=device-dpi,initial-scale=1,maximum-scale=1,user-scalable=no">
-		<style>
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				paddding: 0;
-				overflow: hidden;
-			}
-			body {
-				position: relative;
-				left:0;
-				top:0;
-				right:0;
-				bottom:0;
-			}
-			div.hidden {
-				display: none;
-			}
-			div.page {
-				width: 100%;
-				height: 100%;
-				position: absolute;
-				left:0;
-				top:0;
-				overflow: auto;
-				padding:0;
-				margin:0;
-				background-color:white;
-			}
-			
-			div.page-current {
-				z-index: 10;
-			}
-			div.page-to {
-				z-index: 20;
-			}
-		</style>
+		<link rel="stylesheet" href="basic.css" type="text/css" />			
+		<link rel="stylesheet" href="advanced.css" type="text/css" />			
 		<script type="text/javascript" src="./jquery.js"></script>
 		<script type="text/javascript" src="./spapager.js"></script>
 		<script>
