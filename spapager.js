@@ -16,8 +16,11 @@ var spapager = (function(){
 		
 	}
 	
+	/**
+	 * Add a new page to the DOM
+	 * @param id String identifying the new page. Obviously has to be unique. 
+	 */
 	var addPage = function(id) {
-
 			// If the allPageIds array is not populated yet, do so now.
 		if (typeof allPageIds !== 'object')
 			_findAllPageIds();
@@ -43,7 +46,6 @@ var spapager = (function(){
 	}
 	
 	var removePage = function(id) {
-
 			// If the allPageIds array is not populated yet, do so now.
 		if (typeof allPageIds !== 'object')
 			_findAllPageIds();
@@ -55,6 +57,11 @@ var spapager = (function(){
 		}
 		
 		$('div[data-role="page"]#'+id).remove();
+		
+		var index = allPageIds.indexOf(id);
+		if (index > -1) {
+		    allPageIds.splice(index, 1);
+		}
 		
 		return;
 	}
