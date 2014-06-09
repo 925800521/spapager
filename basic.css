@@ -15,7 +15,7 @@ body {
 div.hidden {
 	display: none;
 }
-div.spapage {
+div.spapager {
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -29,70 +29,70 @@ div.spapage {
 	-webkit-transform: translate3d(0,0,0);
 }
 
-div.spapage-current {
+div.spapager-current {
 	z-index: 10;
 }
-div.spapage-to {
+div.spapager-to {
 	z-index: 20;
 }
 
-@-webkit-keyframes spapage-slide-left {
+@-webkit-keyframes spapager-slide-left {
 	0%	{ left: 100%; }
 	100%{ left: 0%; }
 }
 
-@keyframes spapage-slide-left {
+@keyframes spapager-slide-left {
 	0%	{ left: 100%; }
 	100%{ left: 0%; }
 }
 
-@-webkit-keyframes spapage-slide-right {
+@-webkit-keyframes spapager-slide-right {
 	0%	{ left: -100%; }
 	100%{ left: 0%; }
 }
 
-@keyframes spapage-slide-right {
+@keyframes spapager-slide-right {
 	0%	{ left: -100%; }
 	100%{ left: 0%; }
 }
 
-@-webkit-keyframes spapage-slide-up {
+@-webkit-keyframes spapager-slide-up {
 	0%	{ top: 100%; }
 	100%{ top: 0%; }
 }
 
-@keyframes spapage-slide-up {
+@keyframes spapager-slide-up {
 	0%	{ top: 100%; }
 	100%{ top: 0%; }
 }
 
-@-webkit-keyframes spapage-slide-down {
+@-webkit-keyframes spapager-slide-down {
 	0%	{ top: -100%; }
 	100%{ top: 0%; }
 }
 
-@keyframes spapage-slide-down {
+@keyframes spapager-slide-down {
 	0%	{ top: -100%; }
 	100%{ top: 0%; }
 }
 
 
-.spapage-slide-left {
-	-webkit-animation: spapage-slide-left 0.5s 1;
-	animation: spapage-slide-left 0.5s 1;
+.spapager-slide-left {
+	-webkit-animation: spapager-slide-left 0.5s 1;
+	animation: spapager-slide-left 0.5s 1;
 }
 
-.spapage-slide-right {
-	-webkit-animation: spapage-slide-right 0.5s 1;
-	animation: spapage-slide-right 0.5s 1;
+.spapager-slide-right {
+	-webkit-animation: spapager-slide-right 0.5s 1;
+	animation: spapager-slide-right 0.5s 1;
 }
 
-.spapage-slide-up {
-	-webkit-animation: spapage-slide-up 0.5s 1;
-	animation: spapage-slide-up 0.5s 1;
+.spapager-slide-up {
+	-webkit-animation: spapager-slide-up 0.5s 1;
+	animation: spapager-slide-up 0.5s 1;
 }
 
-.spapage-slide-down {
-	-webkit-animation: spapage-slide-down 0.5s 1;
-	animation: spapage-slide-down 0.5s 1;
+.spapager-slide-down {
+	-webkit-animation: spapager-slide-down 0.5s 1;
+	animation: spapager-slide-down 0.5s 1;
 }

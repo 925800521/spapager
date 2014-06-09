@@ -1,6 +1,7 @@
 var spapager = (function(){
 	var currentPage; // Holds the currently visible page.
 	var allPageIds; // Holds the ids of all pages. Used for duplicate checking.
+	var cssPrefix = 'spapager'; // Holds the css name for all spapage related css selectors.
 	
 	/**
 	 * Initializes the paging concept. 
@@ -8,11 +9,20 @@ var spapager = (function(){
 	 * All divs with data-role="page" are considered pages.
 	 * All divs are auto-hidden, except for the first one in the document
 	 * All divs get the page class which makes them 100%x100% in size and positioned relatively
+	 * @param config Optional object containing configuration options for the class
+	 * Keys:
+	 * cssPrefix: Overrides the standard css prefix "spapager". 
 	 */
-	var init = function() {
-		$('div[data-role="page"]').addClass('spapage hidden');
-		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass('spapage-current');
+	var init = function(config) {
+		if (typeof config == 'object' && config.cssPrefix) {
+			cssPrefix = config.cssPrefix;
+		}
+		
+		$('div[data-role="page"]').addClass('hidden').addClass(cssPrefix);
+		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass(cssPrefix+'-current');
 		currentPage = $('div[data-role="page"]:eq(0)');
+		
+		
 		
 	}
 	
@@ -37,7 +47,7 @@ var spapager = (function(){
 		var newPage = $('<div/>', {
 			'id':id,
 			'data-role':'page',
-			'class':'spapage hidden'
+			'class':cssPrefix+' hidden'
 		});
 		$('body').append(newPage);
 		
@@ -69,7 +79,10 @@ var spapager = (function(){
 	/**
 	 * Switch from the currently visible page to the page with id <toPage>.  
  	 * @param toPage jQuery object or string identifying the page to which must be switched. 
- 	 * @param config Optional object containing switching configuration
+ 	 * @param config Optional object containing switching configuration.
+ 	 * Keys:
+ 	 * transition: String describing the transition direction: slide-left, slide-right, slide-up, slide-down
+ 	 * onTransitionEnd: Optional callback function that will be executed once the animation ends.
 	 */
 	var changePage = function(toPage, config) {
 		if (typeof toPage == 'string') {
@@ -86,59 +99,45 @@ var spapager = (function(){
 				return;
 			}
 			
+			// Defaults for the config object
 		if (typeof config !== 'object')
 			config = {
-				transition: false
+				transition: false,
+				onTransitionEnd: false
 			};
 		
 		_changePage(toPage, config);
 	}
 	
 	var _changePage = function(toPage, config) {
+		var handleSlide = function(cssAnimationName) {
+			toPage.addClass(cssAnimationName);
+			toPage.one(
+				'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+				function(e) {
+					if ($(e.currentTarget).hasClass(cssPrefix)) {
+						toPage.removeClass(cssAnimationName);
+						_terminateChangePage(toPage, config);
+					}
+				}
+			);
+		}
 		_startChangePage(toPage);
 		switch(config.transition) {
 			case 'slide-left':
-				toPage.addClass('spapage-slide-left');
-				toPage.one(
-					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-    				function(e) {
-    					toPage.removeClass('spapage-slide-left');
-    					_terminateChangePage(toPage);
-  					}
-  				);
+				handleSlide(cssPrefix+'-slide-left');
 			break;
 			case 'slide-right':
-				toPage.addClass('spapage-slide-right');
-				toPage.one(
-					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-    				function(e) {
-    					toPage.removeClass('spapage-slide-right');
-    					_terminateChangePage(toPage);
-  					}
-  				);
+				handleSlide(cssPrefix+'-slide-right');
 			break;
 			case 'slide-up':
-				toPage.addClass('spapage-slide-up');
-				toPage.one(
-					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-    				function(e) {
-    					toPage.removeClass('spapage-slide-up');
-    					_terminateChangePage(toPage);
-  					}
-  				);
+				handleSlide(cssPrefix+'-slide-up');
 			break;
 			case 'slide-down':
-				toPage.addClass('spapage-slide-down');
-				toPage.one(
-					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
-    				function(e) {
-    					toPage.removeClass('spapage-slide-down');
-    					_terminateChangePage(toPage);
-  					}
-  				);
+				handleSlide(cssPrefix+'-slide-down');
 			break;
 			default:
-				_terminateChangePage(toPage);
+				_terminateChangePage(toPage, config);
 		}
 	}
 	
@@ -152,15 +151,24 @@ var spapager = (function(){
 	}
 	
 	var _startChangePage = function(toPage) {
-		toPage.addClass('spapage-to'); // 
-		currentPage.addClass('spapage-current'); // Should already be the case...
+		toPage.addClass(cssPrefix+'-to'); // 
+		currentPage.addClass(cssPrefix+'-current'); // Should already be the case...
 		toPage.removeClass('hidden');
 	}
 	
-	var _terminateChangePage = function(toPage) {
-		currentPage.addClass('hidden').removeClass('spapage-current');
-		toPage.addClass('spapage-current').removeClass('spapage-to');
+	var _terminateChangePage = function(toPage, config) {
+		currentPage.addClass('hidden').removeClass(cssPrefix+'-current');
+		toPage.addClass(cssPrefix+'-current').removeClass(cssPrefix+'-to');
+		var previousPage = currentPage;
 		currentPage = $('div#'+toPage.attr('id'));
+		
+		if (typeof config.onTransitionEnd == 'function') {
+			config.onTransitionEnd({
+				previousPage: previousPage.attr('id'),
+				currentPage: currentPage.attr('id'),
+				transition: config.transition || ''
+			});
+		}
 	}
 
 	
