@@ -15,7 +15,7 @@ body {
 div.hidden {
 	display: none;
 }
-div.page {
+div.spapage {
 	width: 100%;
 	height: 100%;
 	position: absolute;
@@ -25,11 +25,74 @@ div.page {
 	padding:0;
 	margin:0;
 	background-color:white;
+	transform: translate3d(0,0,0);
+	-webkit-transform: translate3d(0,0,0);
 }
 
-div.page-current {
+div.spapage-current {
 	z-index: 10;
 }
-div.page-to {
+div.spapage-to {
 	z-index: 20;
+}
+
+@-webkit-keyframes spapage-slide-left {
+	0%	{ left: 100%; }
+	100%{ left: 0%; }
+}
+
+@keyframes spapage-slide-left {
+	0%	{ left: 100%; }
+	100%{ left: 0%; }
+}
+
+@-webkit-keyframes spapage-slide-right {
+	0%	{ left: -100%; }
+	100%{ left: 0%; }
+}
+
+@keyframes spapage-slide-right {
+	0%	{ left: -100%; }
+	100%{ left: 0%; }
+}
+
+@-webkit-keyframes spapage-slide-up {
+	0%	{ top: 100%; }
+	100%{ top: 0%; }
+}
+
+@keyframes spapage-slide-up {
+	0%	{ top: 100%; }
+	100%{ top: 0%; }
+}
+
+@-webkit-keyframes spapage-slide-down {
+	0%	{ top: -100%; }
+	100%{ top: 0%; }
+}
+
+@keyframes spapage-slide-down {
+	0%	{ top: -100%; }
+	100%{ top: 0%; }
+}
+
+
+.spapage-slide-left {
+	-webkit-animation: spapage-slide-left 0.5s 1;
+	animation: spapage-slide-left 0.5s 1;
+}
+
+.spapage-slide-right {
+	-webkit-animation: spapage-slide-right 0.5s 1;
+	animation: spapage-slide-right 0.5s 1;
+}
+
+.spapage-slide-up {
+	-webkit-animation: spapage-slide-up 0.5s 1;
+	animation: spapage-slide-up 0.5s 1;
+}
+
+.spapage-slide-down {
+	-webkit-animation: spapage-slide-down 0.5s 1;
+	animation: spapage-slide-down 0.5s 1;
 }

@@ -10,8 +10,8 @@ var spapager = (function(){
 	 * All divs get the page class which makes them 100%x100% in size and positioned relatively
 	 */
 	var init = function() {
-		$('div[data-role="page"]').addClass('page hidden');
-		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass('page-current');
+		$('div[data-role="page"]').addClass('spapage hidden');
+		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass('spapage-current');
 		currentPage = $('div[data-role="page"]:eq(0)');
 		
 	}
@@ -37,7 +37,7 @@ var spapager = (function(){
 		var newPage = $('<div/>', {
 			'id':id,
 			'data-role':'page',
-			'class':'page hidden'
+			'class':'spapage hidden'
 		});
 		$('body').append(newPage);
 		
@@ -95,37 +95,49 @@ var spapager = (function(){
 	}
 	
 	var _changePage = function(toPage, config) {
+		_startChangePage(toPage);
 		switch(config.transition) {
 			case 'slide-left':
-				toPage.css('left','100%');
-				_startChangePage(toPage);
-				toPage.animate({'left':'0%'}, 500, 'swing',	function() {
-					_terminateChangePage(toPage);
-				});
+				toPage.addClass('spapage-slide-left');
+				toPage.one(
+					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+    				function(e) {
+    					toPage.removeClass('spapage-slide-left');
+    					_terminateChangePage(toPage);
+  					}
+  				);
 			break;
 			case 'slide-right':
-				toPage.css('left','-100%');
-				_startChangePage(toPage);
-				toPage.animate({'left':'0%'}, 500, 'swing',	function() {
-					_terminateChangePage(toPage);
-				});
+				toPage.addClass('spapage-slide-right');
+				toPage.one(
+					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+    				function(e) {
+    					toPage.removeClass('spapage-slide-right');
+    					_terminateChangePage(toPage);
+  					}
+  				);
 			break;
 			case 'slide-up':
-				toPage.css('top','100%');
-				_startChangePage(toPage);
-				toPage.animate({'top':'0%'}, 500, 'swing',	function() {
-					_terminateChangePage(toPage);
-				});
+				toPage.addClass('spapage-slide-up');
+				toPage.one(
+					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+    				function(e) {
+    					toPage.removeClass('spapage-slide-up');
+    					_terminateChangePage(toPage);
+  					}
+  				);
 			break;
 			case 'slide-down':
-				toPage.css('top','-100%');
-				_startChangePage(toPage);
-				toPage.animate({'top':'0%'}, 500, 'swing',	function() {
-					_terminateChangePage(toPage);
-				});
+				toPage.addClass('spapage-slide-down');
+				toPage.one(
+					'webkitAnimationEnd oanimationend msAnimationEnd animationend',   
+    				function(e) {
+    					toPage.removeClass('spapage-slide-down');
+    					_terminateChangePage(toPage);
+  					}
+  				);
 			break;
 			default:
-				_startChangePage(toPage);
 				_terminateChangePage(toPage);
 		}
 	}
@@ -140,14 +152,14 @@ var spapager = (function(){
 	}
 	
 	var _startChangePage = function(toPage) {
-		toPage.addClass('page-to'); // 
-		currentPage.addClass('page-current'); // Should already be the case...
+		toPage.addClass('spapage-to'); // 
+		currentPage.addClass('spapage-current'); // Should already be the case...
 		toPage.removeClass('hidden');
 	}
 	
 	var _terminateChangePage = function(toPage) {
-		currentPage.addClass('hidden').removeClass('page-current');
-		toPage.addClass('page-current').removeClass('page-to');
+		currentPage.addClass('hidden').removeClass('spapage-current');
+		toPage.addClass('spapage-current').removeClass('spapage-to');
 		currentPage = $('div#'+toPage.attr('id'));
 	}
 
