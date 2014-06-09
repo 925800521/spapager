@@ -19,13 +19,8 @@ var spapager = (function(){
 	var addPage = function(id) {
 
 			// If the allPageIds array is not populated yet, do so now.
-		if (typeof allPageIds !== 'object') {
-			allPageIds = [];
-			$('div[data-role="page"]').each(function(i,e) {
-				var foundId = $(e).attr('id');
-				if (foundId) allPageIds.push(foundId);
-			});
-		}
+		if (typeof allPageIds !== 'object')
+			_findAllPageIds();
 		
 			// If there's no page with this id yet, accept it and register it
 		if (allPageIds.indexOf(id) < 0) {
@@ -45,6 +40,23 @@ var spapager = (function(){
 		
 			//Return a jQuery object referring the new page.
 		return newPage;
+	}
+	
+	var removePage = function(id) {
+
+			// If the allPageIds array is not populated yet, do so now.
+		if (typeof allPageIds !== 'object')
+			_findAllPageIds();
+		
+			// If there's no page with this id we can't delete it...
+		if (allPageIds.indexOf(id) < 0) {
+			console.error('Unable to remove page. Page does not exist.');
+			return
+		}
+		
+		$('div[data-role="page"]#'+id).remove();
+		
+		return;
 	}
 	
 	/**
@@ -111,6 +123,15 @@ var spapager = (function(){
 		}
 	}
 	
+	var _findAllPageIds = function() {
+		allPageIds = [];
+		$('div[data-role="page"]').each(function(i,e) {
+			var foundId = $(e).attr('id');
+			if (foundId) allPageIds.push(foundId);
+		});
+		return;
+	}
+	
 	var _startChangePage = function(toPage) {
 		toPage.addClass('page-to'); // 
 		currentPage.addClass('page-current'); // Should already be the case...
@@ -127,6 +148,7 @@ var spapager = (function(){
 	return {
 		addPage: addPage,
 		init: init,
-		changePage: changePage
+		changePage: changePage,
+		removePage: removePage
 	};
 })(); 
