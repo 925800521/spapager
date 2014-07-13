@@ -1,13 +1,13 @@
 var spapager = (function(){
 	var currentPage; // Holds the currently visible page.
-	var allPageIds; // Holds the ids of all pages. Used for duplicate checking.
+	var allPages; // Holds the ids of all pages. Used for duplicate checking.
 	var cssPrefix = 'spapager'; // Holds the css name for all spapage related css selectors.
 	var noCssAnimation = false; // Set to true if jQuery animation should be used rather than CSS animation
 	var noCssAnimationSpeed = 500; // Set the animations speed when using noCSSAnimation only
 
 	/**
 	 * Initializes the paging concept. 
-	 * Typically executed after the onLoad event triggered.
+	 * Typically executed after the DOMLoaded event triggered.
 	 * All divs with data-role="page" are considered pages.
 	 * All divs are auto-hidden, except for the first one in the document.
 	 * All divs get the page class which makes them 100%x100% in size and positioned relatively.
@@ -37,16 +37,26 @@ var spapager = (function(){
 	
 	/**
 	 * Add a new page to the DOM
-	 * @param id String identifying the new page. Obviously has to be unique. 
+	 * @param id String identifying the new page. Obviously has to be unique.
+	 * @param config Optional object containing callbacks 
+	 * onShow: The event to be called when the page became visible, triggered AFTER the transition finished.
+	 * onBeforeShow: The event to be called when the page is about to be shown, triggered BEFORE the transition starts.
+	 * onHidden: The event to be called when the page became hidden, triggered AFTER the transition finished.
+	 * onBeforeHidden: The event to be called when the page is about to be hidden, triggered BEFORE the transition starts.
+	 * 
+	 * MENNO: Je moet nu ervoor zorgen dat de allPages array becomes an associative array of objects, identified by the page id.
+	 * Op die manier kunnen daar de callback events in opgeslagen worden.
+	 * HIER VERDER GAAN!!!
+	 * 
 	 */
-	var addPage = function(id) {
-			// If the allPageIds array is not populated yet, do so now.
-		if (typeof allPageIds !== 'object')
-			_findAllPageIds();
+	var addPage = function(id, config) {
+			// If the allPages array is not populated yet, do so now.
+		if (typeof allPages !== 'object')
+			_findAllPages();
 		
 			// If there's no page with this id yet, accept it and register it
-		if (allPageIds.indexOf(id) < 0) {
-			allPageIds.push(id);
+		if (!allPages[id]) {
+			allPages[id] = _createEmptyPageObject;
 		} else {
 			console.error('Unable to add page. Page already exists.');
 			return;
@@ -65,23 +75,20 @@ var spapager = (function(){
 	};
 	
 	var removePage = function(id) {
-			// If the allPageIds array is not populated yet, do so now.
-		if (typeof allPageIds !== 'object')
-			_findAllPageIds();
+			// If the allPages array is not populated yet, do so now.
+		if (typeof allPages !== 'object')
+			_findAllPages();
 		
-			// If there's no page with this id we can't delete it...
-		if (allPageIds.indexOf(id) < 0) {
+			// Check if there's a page with this id.
+			// If not then we can't delete it...
+		if (!allPages[id]) {
 			console.error('Unable to remove page. Page does not exist.');
 			return
 		}
-		
+			// Remove page div from DOM
 		$('div[data-role="page"]#'+id).remove();
 		
-		var index = allPageIds.indexOf(id);
-		if (index > -1) {
-		    allPageIds.splice(index, 1);
-		}
-		
+		delete(allPages[id]);		
 		return;
 	};
 	
@@ -116,10 +123,11 @@ var spapager = (function(){
 			};
 		
 			// Should we use CSS animation?
-		if (noCssAnimation)
+		if (noCssAnimation) {
 			_changePageNoCSS(toPage, config);
-		else
+		} else {
 			_changePage(toPage, config);
+		}
 	};
 	
 	var _changePage = function(toPage, config) {
@@ -158,13 +166,13 @@ var spapager = (function(){
 	var _changePageNoCSS = function(toPage, config) {
 		var handleSlide = function(cssAttr, value) {
 			toPage.css(cssAttr, value);
-			_startChangePage(toPage);
 			var o = {};
 			o[cssAttr]='0%';
 			toPage.animate(o, noCssAnimationSpeed, 'swing',	function() {
 				_terminateChangePage(toPage, config);
 			});
 		}
+		_startChangePage(toPage);
 		
 		switch(config.transition) {
 			case 'slide-left':
@@ -184,11 +192,20 @@ var spapager = (function(){
 		}
 	};
 	
-	var _findAllPageIds = function() {
-		allPageIds = [];
+	var _createEmptyPageObject = function(id) {
+		return {'id':id};
+	}
+	/**
+	 * Finds all "pages" in the DOM and adds them to an object.
+	 * This object is used to bind event listeners to etc.
+	 */
+	var _findAllPages = function() {
+		allPages = {};
 		$('div[data-role="page"]').each(function(i,e) {
 			var foundId = $(e).attr('id');
-			if (foundId) allPageIds.push(foundId);
+			if (foundId) { 
+				allPages[foundId] = _createEmptyPageObject;
+			}
 		});
 		return;
 	};
