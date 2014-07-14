@@ -9,11 +9,48 @@
 		<script type="text/javascript" src="./spapager.js"></script>
 		<script>
 			$(function() {
+				$('#pageOne').on('show', function(event, eventData) {
+					console.log('Show One');
+					console.log(eventData);
+				});
+				$('#pageOne').on('beforeShow', function(event, eventData) {
+					console.log('BeforeShow One');
+					console.log(eventData);
+				});
+				$('#pageOne').on('hidden', function(event, eventData) {
+					console.log('Hidden One');
+					console.log(eventData);
+				});
+				$('#pageOne').on('beforeHidden', function(event, eventData) {
+					console.log('BeforeHidden One');
+					console.log(eventData);
+				});
+				
+				
+				$('#pageTwo').on('show', function(event, eventData) {
+					console.log('Show Two');
+					console.log(eventData);
+				});
+				$('#pageTwo').on('beforeShow', function(event, eventData) {
+					console.log('Before Show Two');
+					console.log(eventData);
+				});
+				$('#pageTwo').on('hide', function(event, eventData) {
+					console.log('Hide Two');
+					console.log(eventData);
+				});
+				$('#pageTwo').on('beforeHide', function(event, eventData) {
+					console.log('Before Hide Two');
+					console.log(eventData);
+				});
+				
 				spapager.init({
 					cssPrefix:'spapager', 
 					noCssAnimation: false, 
 					noCssAnimationSpeed: 250
 				});
+				
+				
 			});
 		</script>
 	</head>
@@ -39,11 +76,11 @@
 		</div>
 		<div data-role="page" id="pageTwo">
 			<a href="javascript:spapager.changePage('pageOne', {'transition':'slide-left'});">SWITCH</a>
-			<p>Onzichtbaar</p>
-			<p>Onzichtbaar</p>
-			<p>Onzichtbaar</p>
-			<p>Onzichtbaar</p>
-			<p>Onzichtbaar</p>
+			<p>I'm invisible</p>
+			<p>So am I</p>
+			<p>And I</p>
+			<p>Me too</p>
+			<p>If we're invisible...how can they be reading us?</p>
 		</div>
 	</body>
 </html>
