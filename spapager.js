@@ -3,6 +3,7 @@ var spapager = (function(){
 	var cssPrefix = 'spapager'; // Holds the css name for all spapage related css selectors.
 	var noCssAnimation = false; // Set to true if jQuery animation should be used rather than CSS animation
 	var noCssAnimationSpeed = 500; // Set the animations speed when using noCSSAnimation only
+	var onPageChangedEvent = null; // May hold a reference to a method that needs to be called every time a page change happens.
 
 	/**
 	 * Initializes the paging concept. 
@@ -12,8 +13,16 @@ var spapager = (function(){
 	 * All divs get the page class which makes them 100%x100% in size and positioned relatively.
 	 * @param config Optional object containing configuration options for the class.
 	 * Keys:
-	 * cssPrefix: Overrides the standard css prefix "spapager".
-	 * noCssAnimation: Set to true to avoid using css3 animations and fall back to jQuery's animate function.
+	 * cssPrefix: (Optional) Overrides the standard css prefix "spapager".
+	 * noCssAnimation: (Optional) Set to true to avoid using css3 animations and fall back to jQuery's animate function.
+	 * noCssAnimationSpeed: (Optional) (If applicable) Set the animation speed for jQuery's animate function. Only has an effect if "noCssAnimation" is set.
+	 * pageChanged: (Optional) Callback function that gets triggered after every page change. Use this for analytics callbacks or logging.
+	 * Callback function signature: function(eventData)
+	 * eventData contains: 
+	 * - toPage (id of page div)
+	 * - fromPage (id of page div)
+	 * - transition (the transition used to change pages.)
+	 *  
 	 */
 	var init = function(config) {
 		if (typeof config == 'object') {
@@ -27,11 +36,32 @@ var spapager = (function(){
 					noCssAnimationSpeed = config.noCssAnimationSpeed;
 				}
 			}
+			
+			if (typeof config.pageChanged == 'function') {
+				onPageChangedEvent = config.pageChanged;
+			}
 		}
 		
+		currentPage = $('div[data-role="page"]:eq(0)');
+		currentPage.trigger('beforeShow', {
+			fromPage: null,
+			toPage: currentPage.attr('id'),
+			transition: null});
 		$('div[data-role="page"]').addClass('hidden').addClass(cssPrefix);
 		$('div[data-role="page"]:eq(0)').removeClass('hidden').addClass(cssPrefix+'-current');
-		currentPage = $('div[data-role="page"]:eq(0)');
+		currentPage.trigger('show', {
+			currentPage: currentPage.attr('id'),
+			previousPage: null,
+			transition: null
+		});
+		
+		if (onPageChangedEvent) {
+			onPageChangedEvent({
+				toPage: currentPage.attr('id'),
+				fromPage: null,
+				transition: null
+			});
+		}
 	};
 	
 	/**
@@ -47,10 +77,10 @@ var spapager = (function(){
 		}
 			//Add the new page to the DOM.
 		var newPage = $('<div/>', {
-					'id':id,
-					'data-role':'page',
-					'class':cssPrefix+' hidden'
-				});
+			'id':id,
+			'data-role':'page',
+			'class':cssPrefix+' hidden'
+		});
 		
 		$('body').append(newPage);
 	
@@ -177,15 +207,15 @@ var spapager = (function(){
 
 	var _startChangePage = function(toPage, config) {
 		toPage.trigger('beforeShow', {
-			currentPage: currentPage.attr('id'),
-			nextPage: toPage.attr('id'),
+			fromPage: currentPage.attr('id'),
+			toPage: toPage.attr('id'),
 			transition: config.transition || ''
 		});
 		toPage.addClass(cssPrefix+'-to'); // 
 		currentPage.addClass(cssPrefix+'-current'); // Should already be the case...
 		currentPage.trigger('beforeHide', {
-			currentPage: currentPage.attr('id'),
-			nextPage: toPage.attr('id'),
+			fromPage: currentPage.attr('id'),
+			toPage: toPage.attr('id'),
 			transition: config.transition || ''
 		});
 		toPage.removeClass('hidden');
@@ -196,18 +226,27 @@ var spapager = (function(){
 		toPage.addClass(cssPrefix+'-current').removeClass(cssPrefix+'-to');
 		var previousPage = currentPage;
 		currentPage.trigger('hide', {
-			currentPage: currentPage.attr('id'),
-			previousPage: previousPage.attr('id'),
+			toPage: currentPage.attr('id'),
+			fromPage: previousPage.attr('id'),
 			transition: config.transition || ''
 		});
 		currentPage = $('div#'+toPage.attr('id'));
 		
 		toPage.trigger('show', {
-			previousPage: previousPage.attr('id'),
-			currentPage: currentPage.attr('id'),
+			fromPage: previousPage.attr('id'),
+			toPage: currentPage.attr('id'),
 			transition: config.transition || ''
 		});
-	};
+		
+			// Now trigger the pageChanged callback, if available.
+		if (onPageChangedEvent) {
+			onPageChangedEvent({
+				fromPage: previousPage.attr('id'),
+				toPage: currentPage.attr('id'),
+				transition: config.transition || ''
+			});
+		}
+	}
 	
 	return {
 		addPage: addPage,
@@ -215,4 +254,4 @@ var spapager = (function(){
 		changePage: changePage,
 		removePage: removePage
 	};
-})(); 
+})();

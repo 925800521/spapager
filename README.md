@@ -37,7 +37,11 @@ Usage
 		spapager.init({
 			cssPrefix:'spapager', // Default: spapager. Change to something else if the CSS classes collide with your css classes. Don't forget to update the CSS classnames accordingly.
 			noCssAnimation: true, // Avoid using CSS animation. Use this if you suspect the browser has no CSS3 animation support.
-			noCssAnimationSpeed: 250 // When NOT using CSS3 animation, define the animation speed here. Otherwise you can determine this in the keyframe definitions in the CSS.
+			noCssAnimationSpeed: 250, // When NOT using CSS3 animation, define the animation speed here. Otherwise you can determine this in the keyframe definitions in the CSS.
+			pageChanged: function(eventData) {
+				console.log('Page changed!');
+				console.dir(eventData);
+			}
 		});
 	});
 
@@ -91,9 +95,9 @@ On every page change, all 4 available events are triggered:
 
 Together with the event, additional event data is sent, being:
 
-* The page transitioned from
-* The page transitioned to
-* The type of transition used
+* fromPage - The page transitioned from.
+* toPage - The page transitioned to
+* transition - The type of transition used.
 
 *Syntax*
 
@@ -101,6 +105,11 @@ Together with the event, additional event data is sent, being:
 		alert('Hello');
 		console.dir(eventData);
 	});
+
+Furthermore there is a callback that is triggered on every page change.
+This callback is called after the animation has finished and returns the same eventdata as the other events
+See the initialization example above for more info.
+
 
 #License
 Copyright (C) 2014 Appwards.nl, Menno Bieringa

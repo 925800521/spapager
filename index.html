@@ -47,7 +47,11 @@
 				spapager.init({
 					cssPrefix:'spapager', 
 					noCssAnimation: false, 
-					noCssAnimationSpeed: 250
+					noCssAnimationSpeed: 250,
+					pageChanged: function(eventData) {
+						console.log('Page changed!');
+						console.dir(eventData);
+					}
 				});
 				
 				
