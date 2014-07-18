@@ -9,6 +9,7 @@ This library has been purposefully kept as lightweight as possible so it can be 
 It is based on jQuery so it would be advisable only to use this library if you're using jQuery already.
 
 
+
 Usage
 =====
 
@@ -110,6 +111,20 @@ Furthermore there is a callback that is triggered on every page change.
 This callback is called after the animation has finished and returns the same eventdata as the other events
 See the initialization example above for more info.
 
+#FAQ
+Q: Is the hashchange monitored?
+A: No. But if you want you could use Ben Alman's excellent jQuery Plugin "BBQ".
+On Hash Change you can then switch to the page you need to.
+If you've attached the proper listeners there, then you can make sure that page is set-up properly before it gets shown.
+
+Q: Is hash monitoring going to be included?
+A: No. If you need that kind of functionality out of the box go for Ember, Angular or something similar.
+
+Q: I need to pass additional event data when binding events. Can I do that?
+A: Hm.. Good point. Let me think about it and add it as soon as I decide it's a good idea.
+
+Q: Is there something I can do in return for all the code you've written for me?
+A: Why yes there is... Consider linking to appwards.nl. That would directly help my business.
 
 #License
 Copyright (C) 2014 Appwards.nl, Menno Bieringa
